@@ -18,7 +18,8 @@ ENV GLPI_DB_PORT=3306 \
 COPY mpm_prefork.conf /etc/apache2/mods-available/mpm_prefork.conf
 COPY railway-proxy.conf /etc/apache2/conf-available/railway-proxy.conf
 COPY start.sh setup.sh /opt/railway/
-RUN a2enconf railway-proxy >/dev/null \
+RUN a2enmod proxy proxy_http >/dev/null \
+ && a2enconf railway-proxy >/dev/null \
  && chmod 755 /opt/railway/start.sh /opt/railway/setup.sh
 
 # start.sh prepares the volume as root; GLPI console, cron and Apache workers run as www-data.
