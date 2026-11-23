@@ -33,7 +33,7 @@ All are set by the template; nothing has to be typed in.
 | `MariaDB` | `MARIADB_PASSWORD`, `MARIADB_ROOT_PASSWORD` | Generated |
 | `MariaDB` | `RAILWAY_DEPLOYMENT_DRAINING_SECONDS` | `60`, so a redeploy lets MariaDB shut down cleanly |
 
-Fixed settings live in the Dockerfiles and can be overridden with a service variable: `GLPI_DB_NAME`/`GLPI_DB_USER` (`glpi`), `GLPI_DEFAULT_LANGUAGE` (`en_GB`, used at install), `PHP_MEMORY_LIMIT` (`256M`), `APACHE_MAX_WORKERS` (`8`), `GLPI_CRONTAB_ENABLED` (`1`).
+Fixed settings live in the Dockerfiles and can be overridden with a service variable: `GLPI_DB_NAME`/`GLPI_DB_USER` (`glpi`), `GLPI_DEFAULT_LANGUAGE` (`en_GB`, used at install), `PHP_MEMORY_LIMIT` (`256M`), `APACHE_MAX_WORKERS` (`10`), `GLPI_CRONTAB_ENABLED` (`1`).
 
 ## Resources
 
