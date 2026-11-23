@@ -1,7 +1,6 @@
 [mariadbd]
 # Data lives in a subfolder of the Railway volume, so the volume's lost+found never shows up as a database.
 datadir = /var/lib/mysql/data
-bind-address = ::
 skip-name-resolve
 character-set-server = utf8mb4
 collation-server = utf8mb4_unicode_ci
