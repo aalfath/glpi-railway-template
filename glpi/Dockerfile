@@ -12,7 +12,7 @@ ENV GLPI_DB_PORT=3306 \
     GLPI_DEFAULT_LANGUAGE=en_GB \
     PORT=8080 \
     APACHE_START_SERVERS=2 \
-    APACHE_MAX_WORKERS=6 \
+    APACHE_MAX_WORKERS=8 \
     PHP_MEMORY_LIMIT=256M
 
 COPY mpm_prefork.conf /etc/apache2/mods-available/mpm_prefork.conf
