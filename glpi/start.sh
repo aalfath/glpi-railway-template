@@ -15,6 +15,16 @@ mkdir -p /var/glpi
 chown www-data:www-data /var/glpi
 find /var/glpi -xdev -mindepth 1 -maxdepth 1 ! -name lost+found ! -user www-data -exec chown -R www-data:www-data {} +
 
+# mod_php needs the prefork MPM only. Railway's builder can bring back the image's disabled
+# mpm_event/mpm_worker links ("More than one MPM loaded"), so enforce it at every start.
+for f in /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.conf; do
+  case "$f" in
+    */mpm_prefork.*) ;;
+    *) if [ -e "$f" ] || [ -L "$f" ]; then rm "$f"; fi ;;
+  esac
+done
+if [ ! -e /etc/apache2/mods-enabled/mpm_prefork.load ]; then a2enmod -q mpm_prefork >/dev/null; fi
+
 # Listen on Railway's PORT.
 echo "Listen ${PORT}" > /etc/apache2/ports.conf
 sed -i -E "s#<VirtualHost \*:[0-9]+>#<VirtualHost *:${PORT}>#" /etc/apache2/sites-available/000-default.conf
