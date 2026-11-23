@@ -20,4 +20,8 @@ echo "Listen ${PORT}" > /etc/apache2/ports.conf
 sed -i -E "s#<VirtualHost \*:[0-9]+>#<VirtualHost *:${PORT}>#" /etc/apache2/sites-available/000-default.conf
 echo "memory_limit = ${PHP_MEMORY_LIMIT}" > "$PHP_INI_DIR/conf.d/zz-railway.ini"
 
+# Apache and GLPI's log forwarder reopen /dev/stdout and /dev/stderr; give www-data the container's log pipes.
+chown www-data:www-data /proc/self/fd/1 /proc/self/fd/2 2>/dev/null \
+  || echo "[railway] note: could not hand the log pipes to www-data."
+
 exec setpriv --reuid=www-data --regid=www-data --init-groups /opt/railway/run.sh
