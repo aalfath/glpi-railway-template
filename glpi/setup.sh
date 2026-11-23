@@ -1,11 +1,10 @@
 #!/bin/bash
-# www-data part of the start: install or update GLPI, lock down the default accounts,
-# then run Apache and GLPI's cron worker. If either stops, exit non-zero so Railway restarts the service.
+# Runs as www-data before the web server starts: install or update the GLPI database,
+# and on first start give the super-admin the generated password and disable the demo accounts.
 set -euo pipefail
 cd /var/www/glpi
 
 /opt/glpi/entrypoint/init-volumes-directories.sh
-/opt/glpi/entrypoint/forward-logs.sh
 /opt/glpi/entrypoint/wait-for-db.sh railway
 
 installed_marker="${GLPI_CONFIG_DIR}/.railway-installed"
@@ -56,23 +55,3 @@ fi
 if [ -n "${GLPI_URL_BASE:-}" ]; then
   bin/console config:set url_base "$GLPI_URL_BASE" --no-interaction --quiet || true
 fi
-
-apache2-foreground &
-apache_pid=$!
-/opt/glpi/cron-worker.sh &
-cron_pid=$!
-
-stopping=0
-term() { stopping=1; kill -TERM "$apache_pid" "$cron_pid" 2>/dev/null || true; }
-trap term TERM INT
-
-set +e
-wait -n "$apache_pid" "$cron_pid"
-status=$?
-if [ "$stopping" = 1 ]; then
-  wait "$apache_pid" "$cron_pid" 2>/dev/null
-  exit 0
-fi
-echo "[railway] A GLPI process stopped unexpectedly (exit $status); exiting so Railway restarts the service." >&2
-kill -TERM "$apache_pid" "$cron_pid" 2>/dev/null
-exit 1
